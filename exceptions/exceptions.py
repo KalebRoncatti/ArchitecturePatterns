@@ -1,0 +1,3 @@
+
+class InsufficientAvailableQuantity(Exception):
+    pass
