@@ -1,6 +1,14 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import Optional
+from typing import Optional, Set, List
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class OrderLineBase(BaseModel):
+    order_id: str
+    stock_keeping_unit: str
+    quantity: int
 
 
 class BatchBase(BaseModel):
@@ -8,10 +16,4 @@ class BatchBase(BaseModel):
     stock_keeping_unit: str
     available_quantity: int
     estimated_time_of_arrival: Optional[date]
-
-
-class OrderLineBase(BaseModel):
-    order_id: str
-    stock_keeping_unit: str
-    quantity: int
-
+    allocations: Optional[List[OrderLineBase]] = []

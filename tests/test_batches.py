@@ -1,5 +1,6 @@
 from datetime import date
 from typing import Tuple
+import pytest
 
 from models.pydantic_models import BatchBase, OrderLineBase
 from models.models import Batch
@@ -24,6 +25,15 @@ def test_allocating_to_a_batch_reduces_the_available_quantity():
                                             line_quantity=2)
     batch.allocate(order_line=order_line)
     assert batch.batch.available_quantity == 18
+
+
+def test_deallocating_to_a_batch_increases_the_available_quantity():
+    batch, order_line = make_batch_and_line(stock_keeping_unit='RED-BED',
+                                            batch_quantity=20,
+                                            line_quantity=2)
+    batch.allocate(order_line=order_line)
+    batch.deallocate(order_line=order_line)
+    assert batch.batch.available_quantity == 20
 
 
 def test_can_allocate_if_available_greater_than_required():
@@ -52,12 +62,4 @@ def test_cannot_allocate_if_skus_do_not_match():
                                        quantity=10)
     batch = Batch(batch_base=batch_base)
     assert batch.can_allocate(different_sku_line) is False
-
-
-if __name__ == '__main__':
-    test_allocating_to_a_batch_reduces_the_available_quantity()
-    test_can_allocate_if_available_greater_than_required()
-    test_cannot_allocate_if_available_smaller_than_required()
-    test_can_allocate_if_available_equal_to_required()
-    test_cannot_allocate_if_skus_do_not_match()
 
